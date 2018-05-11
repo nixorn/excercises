@@ -1,4 +1,3 @@
-import Data.List (intercalate)
 
 firstPart = "This old man, he played "
 secPart   = ",\nHe played knick-knack "
@@ -15,6 +14,6 @@ values = [("one", "on my thumb")
          ,("nine", "on my spine")
          ,("ten", "once again")]
 
-consctuctPoem (x, y) = firstPart ++ x ++ secPart ++ y ++ thirdPart
+consctuctPoem (x, y) = firstPart ++ x ++ secPart ++ y ++ thirdPart ++ "\n\n"
 
-thisOldMan = (intercalate "\n\n" $ map consctuctPoem values) ++ "\n"
+thisOldMan = concat $ map consctuctPoem values
