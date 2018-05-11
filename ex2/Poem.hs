@@ -14,6 +14,6 @@ values = [("one", "on my thumb")
          ,("nine", "on my spine")
          ,("ten", "once again")]
 
-consctuctPoem (x, y) = firstPart ++ x ++ secPart ++ y ++ thirdPart ++ "\n\n"
+constructPoem (x, y) = firstPart ++ x ++ secPart ++ y ++ thirdPart ++ "\n\n"
 
-thisOldMan = concat $ map consctuctPoem values
+thisOldMan = concat $ map constructPoem values
