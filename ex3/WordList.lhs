@@ -1,6 +1,8 @@
+> module WordList where
 > import Prelude hiding (Word)
 > import Data.List
 > import Data.Char
+
 
 -------------------
 Exercise 3.1
