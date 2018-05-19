@@ -4,19 +4,21 @@
 Exercise 3.6
 Define a function that given a maximal line width and a list of words returns a list of fitting lines so that concat . format n = id .
 
-> type Word = String
-> format :: Int -> [Word] -> [[Word]]
+> format :: Int -> [String] -> [[String]]
 > format n ws = subwords ws [] [] n
->   where linelen :: [Word] -> Int
+>   where linelen :: [String] -> Int
 >         linelen ws = length $ unwords ws
->         subwords :: [Word] -> [Word] -> [Word] -> Int -> [[Word]]
+>         subwords :: [String] -> [String] -> [String] -> Int -> [[String]]
 >         subwords (w:ws) prev curr n =
->           if linelen curr > n then [prev] ++ format n (w:ws)
+>           if linelen curr > n then [prev] ++ format n ((last curr):w:ws)
 >             else subwords ws curr (curr ++ [w]) n
 >         subwords [] prev curr n =
 >           if linelen curr > n then [prev, init curr, [last curr]]
 >             else [prev, curr]
 
 
+Is this always possible?
+Answer: At least it is impossible when length of some word bigger than maximal line length.
 
-Is this always possible? (As an aside, a function f with the property concat . f = id computes a partition of its input. Have you seen this property before?)
+:TODO 
+(As an aside, a function f with the property concat . f = id computes a partition of its input. Have you seen this property before?)

@@ -1,4 +1,6 @@
+> module QuickTest where
 > import Data.List hiding (permutations)
+> import Runs
 
 > type Probes a = [a]
 > type Property a = a -> Bool
@@ -6,8 +8,8 @@
 > infixr 1 -->, ==>
 > (-->) :: Probes a -> Property b -> Property (a -> b)
 > (==>) :: Probes a -> (a -> Property b) -> Property (a -> b)
-> probes --> prop = \f -> and [prop (f x ) | x <- probes ]
-> probes ==> prop = \f -> and [prop x (f x ) | x <- probes ]
+> probes --> prop = \f -> and [prop (f x)   | x <- probes]
+> probes ==> prop = \f -> and [prop x (f x) | x <- probes]
 
 
 Exercise 3.5
@@ -34,10 +36,10 @@ c) Use the combinators to define a testing procedure for the function of Exercis
 
 :TODO
 
-> trustedRuns = undefined
->
-> runs_test :: (Ord a) => Probes [a] -> Property [[a]]
-> runs_test probes = probes ==> \inp res -> trustedRuns inp == res
+> trustedRuns = runs
+
+> runs_test :: (Ord a) => Probes [a] -> ([a] -> ) -> Property ([a] -> [[a]])
+> runs_test probes = probes ==> (\inp res -> trustedRuns inp == res)
 
 
 :TODO
@@ -47,9 +49,10 @@ d) Harry Hacker has translated a function that calculates the integer square roo
 > isqrt n = loop 0 3 1
 >   where loop i k s
 >              | s <= n = loop (i + 1) (k + 2) (s + k )
->               | otherwise = i
+>              | otherwise = i
 
--- > isIntegerSqrt :: Property (Integer -> Integer )
+> isIntegerSqrt :: Property (Integer -> Integer )
+> isIntegerSqrt = undefined
 
 e) Define a combinator that takes probes for type a, probes for type b, and generates probes for type (a, b) by combining the input data in all possible ways e.g.
 
