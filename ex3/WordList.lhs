@@ -14,10 +14,12 @@ Write a non-recursive program that computes the word list of a given text, order
 > worldList s = map (\l -> (head l, length l)) $ sortOn length . group . sort . words $ filter (/= '.') $ map toLower s
 
 
-:TODO https://www.geeksforgeeks.org/stability-in-sorting-algorithms/
 As an aside, sort and sortOn implement stable sorting algorithms. Why is this a welcome feature for this particular application?
 
-Because sorting ends for one list traverse?
+Answer:
+Because sortOn save alphabet sorting after sort, so result looks better.
+Extended answer here  https://www.geeksforgeeks.org/stability-in-sorting-algorithms/
+
 
 :TODO What means "shown"? Printed to output? It sounds like IO monad using, I guess to early for that.
 Can you format the output so that one entry is shown per line?
