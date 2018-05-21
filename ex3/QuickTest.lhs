@@ -34,16 +34,13 @@ so for array with 6 elems we have 6! = (1*2*3*4*5*6) = 720 permutations.
 
 c) Use the combinators to define a testing procedure for the function of Exercise 3.3.
 
-:TODO
-
 > trustedRuns = runs
-
-> runs_test :: (Ord a) => Probes [a] -> ([a] -> ) -> Property ([a] -> [[a]])
-> runs_test probes = probes ==> (\inp res -> trustedRuns inp == res)
+> runs_test = permutations[0..5] ==> (\inp res -> trustedRuns inp == res)
 
 
-:TODO
 d) Harry Hacker has translated a function that calculates the integer square root from C to Haskell. It is not immediately obvious that this definition is correct. Define a testing procedure to exercise the program.
+
+
 
 > isqrt :: Integer -> Integer
 > isqrt n = loop 0 3 1
@@ -52,14 +49,14 @@ d) Harry Hacker has translated a function that calculates the integer square roo
 >              | otherwise = i
 
 > isIntegerSqrt :: Property (Integer -> Integer )
-> isIntegerSqrt = undefined
+> isIntegerSqrt = [1..1000] ==> (\inp res ->  (floor . sqrt . fromIntegral) inp == res)
 
 e) Define a combinator that takes probes for type a, probes for type b, and generates probes for type (a, b) by combining the input data in all possible ways e.g.
 
--- > infixr 4 <+>
--- > (<+>) :: Probes a -> Probes b -> Probes (a, b)
--- > (<+>) :: Probes a -> Probes b -> Probes (a, b)
+> infixr 4 <+>
+> (<+>) :: Probes a -> Probes b -> Probes (a, b)
+> (<+>) pa pb = [(a,b)| a <- pa, b <- pb]
 
-:TODO
 If as contains m elements, and bs contains n elements, then as perm_x bs contains ...
+Answer: length as * length bs elements
 
