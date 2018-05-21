@@ -13,8 +13,8 @@ Define a function that given a maximal line width and a list of words returns a 
 >           if linelen curr > n then [prev] ++ format n ((last curr):w:ws)
 >             else subwords ws curr (curr ++ [w]) n
 >         subwords [] prev curr n =
->           if linelen curr > n then [prev, init curr, [last curr]]
->             else [prev, curr]
+>           if linelen curr > n then [init curr, [last curr]]
+>             else [curr]
 
 
 Is this always possible?
