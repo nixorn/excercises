@@ -10,20 +10,32 @@ Recall the representation of bases and DNA strands introduced in the lectures.
 ----
 a) Define a function contains :: Segment -> DNA -> Bool that checks whether a specified DNA segment is contained in a DNA strand.
 
-> contains :: Segment -> DNA -> Bool
-> contains [] _ = True
-> contains seg dna
+> initMatch :: Segment -> DNA -> Bool
+> initMatch seg dna
 >   | length seg > length dna = False
 >   | seg == (take (length seg) (dna)) = True
->   | otherwise = contains seg (drop 1 dna)
+>   | otherwise = False
+
+
+> contains :: Segment -> DNA -> Bool
+> contains [] _ = True
+> contains seg dna = if not (initMatch seg dna)
+>                     then contains seg (drop 1 dna)
+>                     else True
 
 
 Can you modify the definition so that a list of positions of occurrences is returned instead?
 
-:TODO
 
+:TODO Invalid
 > contains' :: Segment -> DNA -> [Integer]
-> contains' = undefined
+> contains' seg dna = indexedContains seg dna [] 0
+>   where indexedContains :: Segment -> DNA -> [Integer] -> Integer -> [Integer]
+>         indexedContains _ [] acc _ = acc
+>         indexedContains (s:eg) (d:na) acc counter = do
+>           let (notmuch, possibmatch) = span (/= s) (d:na)
+>           if initMatch (s:eg) possibmatch then indexedContains (s:eg) (drop 1 possibmatch) (acc ++ [counter]) (counter + toInteger (length notmuch) + toInteger (length (s:eg)))
+>             else indexedContains (s:eg) (drop 1 possibmatch) acc (counter + toInteger (length notmuch) + 1)
 
 
 ----
