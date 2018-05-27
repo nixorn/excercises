@@ -17,6 +17,7 @@
 --------------------------------------------------------------------------------
 4.1 b) Submit a scan/photo of your solution, or draw the solution using TikZ.
 :TODO
+
 > ex1  ::  Tree Integer
 > ex1  =   Node Empty 4711 (Node Empty 0815 (Node Empty 42 Empty))
 > ex2  ::  Tree String
@@ -62,7 +63,62 @@ size t >= maxHeight t >= minHeight t
 --------------------------------------------------------------------------------
 4.2 a)
 
-preorder, inorder, postorder :: Tree elem -> [elem]
+:TODO looks like 2n + 1 (?)
+
+> trv :: Tree elem -> [elem]
+> trv Empty = []
+> trv (Node Empty a Empty) = [a]
+> trv (Node Empty a r)     = a : trv r
+
+
+> preorder :: Tree elem -> [elem]
+> preorder Empty = []
+> preorder n = (trv $ repack n Empty)
+>   -- repack tree to all lefts elements will Empty, so we have only one direction from root -> to right
+>   where repack Empty                Empty = Empty
+>         repack Empty                r'    = repack r' Empty
+>         repack (Node Empty a Empty) Empty = Node Empty a Empty
+>         repack (Node Empty a Empty) r'    = Node Empty a r'
+>         repack (Node l a r)         Empty = Node Empty a $ repack l r
+>         repack (Node l a r)         r'    = Node Empty a $ repack l (repack r r')
+
+> inorder :: Tree elem -> [elem]
+> inorder Empty = []
+> inorder n = (trv $ repack n Empty)
+>   where repack Empty Empty = Empty
+>         repack Empty r' = repack r' Empty
+>         repack n@(Node Empty a Empty) Empty = n
+>         repack (Node Empty a r)     Empty   = Node Empty a $ repack r  Empty
+>         repack (Node Empty a Empty) r'      = Node Empty a $ repack r' Empty
+>         repack (Node Empty a r) r'          = Node Empty a $ repack r $ repack r' Empty
+>         repack (Node l a r) r'              = repack (repack l $ Node Empty a $ repack r $ repack r' Empty) Empty
+
+> postorder :: Tree elem -> [elem]
+> postorder Empty = []
+> postorder n = (trv $ repack n Empty)
+>   where repack Empty Empty = Empty
+>         repack Empty r'    = repack r' Empty
+>         repack n@(Node Empty a Empty) Empty = n
+>         repack (Node Empty a r)       Empty = repack r $ Node Empty a Empty
+>         repack (Node Empty a r)       r'    = repack r $ repack r' $ Node Empty a Empty
+>         repack (Node l a Empty)       Empty = Node Empty a $ repack l Empty
+>         repack (Node l a r)           Empty = repack r $ Node Empty a $ repack l Empty
+>         repack (Node l a r)           r'    = repack r $ repack r' $ Node Empty a $ repack l Empty
+
+
+> preorder' :: Tree elem -> [elem]
+> preorder' Empty = []
+> preorder' (Node l a r) = a : (preorder' l ++ preorder' r)
+
+
+> inorder' :: Tree elem -> [elem]
+> inorder' Empty = []
+> inorder' (Node l a r) = inorder' l ++ (a : inorder' r)
+
+> postorder' :: Tree elem -> [elem]
+> postorder' Empty = []
+> postorder' (Node l a r) = postorder' l ++ postorder' r ++ [a]
+
 
 in linear time!
 
