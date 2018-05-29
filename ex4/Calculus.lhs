@@ -51,7 +51,7 @@ b)
 > apply (f1 :+: f2) b = (apply f1 b) + (apply f2 b)
 > apply (f1 :*: f2) b = (apply f1 b) * (apply f2 b)
 > apply (f1 :^: f2) b = (apply f1 b) ** (apply f2 b)
-> apply (f1 :^: f2) b = (apply f1 b) / (apply f2 b)
+> apply (f1 :/: f2) b = (apply f1 b) / (apply f2 b)
 > apply (f1 :.: f2) b = ((apply f1) . (apply f2)) b
 
 --------------------------------------------------------------------------------
