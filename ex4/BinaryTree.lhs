@@ -1,5 +1,7 @@
 > module BinaryTree
 > where
+>
+> import Data.List
 
 > data Tree elem = Empty | Node (Tree elem) elem (Tree elem)
 >   deriving (Show)
@@ -16,7 +18,6 @@
 
 --------------------------------------------------------------------------------
 4.1 b) Submit a scan/photo of your solution, or draw the solution using TikZ.
-:TODO
 
 > ex1  ::  Tree Integer
 > ex1  =   Node Empty 4711 (Node Empty 0815 (Node Empty 42 Empty))
@@ -63,8 +64,6 @@ size t >= maxHeight t >= minHeight t
 --------------------------------------------------------------------------------
 4.2 a)
 
-:TODO looks like 2n + 1 (?)
-
 > trv :: Tree elem -> [elem]
 > trv Empty = []
 > trv (Node Empty a Empty) = [a]
@@ -93,6 +92,8 @@ size t >= maxHeight t >= minHeight t
 >         repack (Node Empty a r) r'          = Node Empty a $ repack r $ repack r' Empty
 >         repack (Node l a r) r'              = repack (repack l $ Node Empty a $ repack r $ repack r' Empty) Empty
 
+:TODO error here
+
 > postorder :: Tree elem -> [elem]
 > postorder Empty = []
 > postorder n = (trv $ repack n Empty)
@@ -100,10 +101,11 @@ size t >= maxHeight t >= minHeight t
 >         repack Empty r'    = repack r' Empty
 >         repack n@(Node Empty a Empty) Empty = n
 >         repack (Node Empty a r)       Empty = repack r $ Node Empty a Empty
->         repack (Node Empty a r)       r'    = repack r $ repack r' $ Node Empty a Empty
->         repack (Node l a Empty)       Empty = Node Empty a $ repack l Empty
->         repack (Node l a r)           Empty = repack r $ Node Empty a $ repack l Empty
->         repack (Node l a r)           r'    = repack r $ repack r' $ Node Empty a $ repack l Empty
+>         repack (Node Empty a r)       r'    = repack r $ Node Empty a $ repack r' Empty
+>         repack (Node l a Empty)       Empty = repack l $ Node Empty a Empty
+>         repack (Node l a r)           Empty = repack l $ repack r $ Node Empty a Empty
+>         repack (Node l a r)           r'    = repack l $ repack r $ Node Empty a $ repack r' Empty
+
 
 
 > preorder' :: Tree elem -> [elem]
@@ -125,21 +127,55 @@ in linear time!
 --------------------------------------------------------------------------------
 4.2 b)
 
+> lbl Empty = []
+> lbl (Node _ x _ ) = x
+
+> levels lvl Empty = [(lvl, [])]
+> levels lvl (Node l x r) = filter (not . null . snd) $ [(lvl, [x])] ++ levels (lvl + 1) l  ++ levels (lvl + 1) r
+>
+> concatLevels lvls@((lvl, val):_) = [intercalate (replicate (lvl*2) ' ') $ map snd $ filter (\x -> fst x == lvl) lvls] ++ concatLevels (filter (\x -> fst x /= lvl) lvls)
+> concatLevels [] = []
+
+
 layout :: (Show elem) => Tree elem -> String
+layout tr = levels tr
+  where repack Empty = " "
+        repack (Node l a r) = ( "\n" ++ show a ++ "\n") ++ repack l ++ repack r
 
 --------------------------------------------------------------------------------
 4.2 c) [Optional]
 
+:TODO
 
 --------------------------------------------------------------------------------
 4.3 a)
 
-build :: [elem] -> Tree elem
+:TODO wrong structure of answer. Order is correct
+
+> build :: [elem] -> Tree elem
+> build xs = case sublists xs of
+>                ([], y:[]) -> Node Empty y Empty
+>                (xs, y:ys) -> Node (build xs) y (build ys)
+>                ([], [])   -> Empty
+>   where
+>     n = length xs
+>     half = div n 2
+>     sublists xs = (take half xs, drop half xs)
+
 
 --------------------------------------------------------------------------------
 4.3 b)
 
-balanced :: [elem] -> Tree elem
+> balanced :: [elem] -> Tree elem
+> balanced xs = case sublists xs of
+>              (x:xs, ys) -> Node (balanced xs) x (balanced ys)
+>              ([], [])   -> Empty
+>              ([], y:[]) -> Node Empty y Empty
+>   where
+>     n = length xs
+>     half = div n 2
+>     sublists xs = (take half xs, drop half xs)
+
 
 --------------------------------------------------------------------------------
 4.3 c)
