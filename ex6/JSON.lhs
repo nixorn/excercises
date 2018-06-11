@@ -220,11 +220,41 @@ For matching String and Number tokens, use these helpers:
 > jstring ((String s) : t) = [(JString s, t)]
 > jstring _ = []
 
-> colon :: Parser Token JValue
-> colon ((Sep ':'):xs) = parseJSON xs
-> colon _ = []
+> jnumber :: Parser Token JValue
+> jnumber ((Number n) : t) = [(JNumber n, t)]
+> jnumber _ = []
 
-> repackList = fmap (\(l, rest) -> (JArray l, rest))
+> jatom :: Parser Token JValue
+> jatom ((Atom "true") : t) = [(JTrue, t)]
+> jatom ((Atom "false") : t) = [(JFalse, t)]
+> jatom ((Atom "null") : t) = [(JNull, t)]
+> jatom _ = []
+
+> jkvs = do
+>     label <- string
+>     value <- (jobj
+>               >| jarray
+>               >| jatom
+>               >| jnumber
+>               >| jstring)
+>     return $ [(label, value), ]
+
+> jobj = do
+>   tok '{'
+>   kvs <- jkvs
+>   tok '}'
+>   return $ JObject kvs
+
+> jarray = do
+>     tok "["
+>     array <- jobj
+>              >| jarray
+>              >| jatom
+>              >| jnumber
+>              >| jnumber
+>              >| tok ","
+>     tok "]"
+>     return $ JArray array
 
 
 kv :: Parser Token (String, JValue)
