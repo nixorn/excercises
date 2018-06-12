@@ -315,5 +315,10 @@ parseJSON _ = []
 --------------------------------------------------------------------------------
 6.4 b)
 
-instance (JSON a) => JSON [a] where
-...
+> instance (JSON a) => JSON [a] where
+>   toJSON x = JArray x
+>   fromJSON (JArray x) = x
+
+
+What is an important difference between JSON arrays and Haskell lists?
+Haskell list are homogeneous.
