@@ -2,6 +2,7 @@
 > where
 > import Prelude hiding ((>>), (>>=), fail, return)
 > import Data.Char (isHexDigit, chr)
+> import Data.Maybe (isJust, fromJust)
 > import Numeric (readHex)
 > import Data.List (intersperse)
 
@@ -315,9 +316,16 @@ parseJSON _ = []
 --------------------------------------------------------------------------------
 6.4 b)
 
-> instance (JSON a) => JSON [a] where
->   toJSON x = JArray x
->   fromJSON (JArray x) = x
+instance (JSON a) => JSON [a] where
+  toJSON x = JArray $ map toJSON x
+  fromJSON (JArray xs) = if all isJust (fromJSON' xs)
+                         then Just $ map fromJust (fromJSON' xs)
+                         else Nothing
+    where fromJSON' :: (JSON a) => [JValue] -> [Maybe a]
+          fromJSON' [] = []
+          fromJSON' (x:xs) = case fromJSON x of
+            Nothing -> [Nothing]
+            Just v -> Just v : fromJSON' xs
 
 
 What is an important difference between JSON arrays and Haskell lists?
