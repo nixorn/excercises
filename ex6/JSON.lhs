@@ -288,17 +288,29 @@ parseJSON _ = []
 --------------------------------------------------------------------------------
 6.3 b)
 
-> check :: Formatter a -> Parser String a -> String -> Bool
-> check f p val = (f $ head $ parse p [val]) == val
+> check :: Formatter a -> Parser Char a -> String -> Bool
+> check f p val = (f $ head $ parse p val) == val
 
 --------------------------------------------------------------------------------
 6.4 a)
 
-instance JSON Integer where
-...
+> class JSON a where
+>   toJSON   :: a -> JValue
+>   fromJSON :: JValue -> Maybe a
 
-instance JSON Bool where
-...
+
+> instance JSON Integer where
+>   fromJSON (JNumber i) = Just i
+>   fromJSON _ = Nothing
+>   toJSON i = JNumber i
+
+
+> instance JSON Bool where
+>   fromJSON JTrue = Just True
+>   fromJSON JFalse = Just False
+>   fromJSON _ = Nothing
+>   toJSON True = JTrue
+>   toJSON False = JFalse
 
 --------------------------------------------------------------------------------
 6.4 b)
