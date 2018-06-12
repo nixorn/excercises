@@ -230,31 +230,31 @@ For matching String and Number tokens, use these helpers:
 > jatom ((Atom "null") : t) = [(JNull, t)]
 > jatom _ = []
 
-> jkvs = do
->     label <- string
->     value <- (jobj
->               >| jarray
->               >| jatom
->               >| jnumber
->               >| jstring)
->     return $ [(label, value), ]
+jkvs = do
+    label <- string
+    value <- (jobj
+              >| jarray
+              >| jatom
+              >| jnumber
+              >| jstring)
+    return $ (label, value)
 
-> jobj = do
->   tok '{'
->   kvs <- jkvs
->   tok '}'
->   return $ JObject kvs
+jobj = do
+  tok '{'
+  kvs <- jkvs
+  tok '}'
+  return $ JObject kvs
 
-> jarray = do
->     tok "["
->     array <- jobj
->              >| jarray
->              >| jatom
->              >| jnumber
->              >| jnumber
->              >| tok ","
->     tok "]"
->     return $ JArray array
+jarray = do
+    tok "["
+    array <- jobj
+             >| jarray
+             >| jatom
+             >| jnumber
+             >| jnumber
+             >| tok ","
+    tok "]"
+    return $ JArray array
 
 
 kv :: Parser Token (String, JValue)
@@ -267,26 +267,29 @@ kv obj = do
 Now implement the parser:
 
 > parseJSON :: Parser Token JValue
-> parseJSON ((String s):rest) = (JString s, rest) : parseJSON rest
-> parseJSON ((Number n):rest) = (JNumber n, rest) : parseJSON rest
-> parseJSON ((Atom "true"):rest) = (JTrue, rest) : parseJSON rest
-> parseJSON ((Atom "false"):rest) = (JFalse, rest) : parseJSON rest
-> parseJSON ((Sep '['):lst) = repackList $ (many parseJSON) lst
-> parseJSON ((Sep ']'):rest) = parseJSON rest
+> parseJSON = undefined
 
--- > parseJSON ((Sep '{'):object) = many kv $ object
+parseJSON ((String s):rest) = (JString s, rest) : parseJSON rest
+parseJSON ((Number n):rest) = (JNumber n, rest) : parseJSON rest
+parseJSON ((Atom "true"):rest) = (JTrue, rest) : parseJSON rest
+parseJSON ((Atom "false"):rest) = (JFalse, rest) : parseJSON rest
+parseJSON ((Sep '['):lst) = repackList $ (many parseJSON) lst
+parseJSON ((Sep ']'):rest) = parseJSON rest
 
-> parseJSON ((Sep '}'):rest) = parseJSON rest
-> parseJSON ((Sep ','):xs) = parseJSON xs
-> parseJSON ((Sep ':'):xs) = parseJSON xs
-> parseJSON _ = []
+parseJSON ((Sep '{'):object) = many kv $ object
+
+parseJSON ((Sep '}'):rest) = parseJSON rest
+parseJSON ((Sep ','):xs) = parseJSON xs
+parseJSON ((Sep ':'):xs) = parseJSON xs
+parseJSON _ = []
 
 
 
 --------------------------------------------------------------------------------
 6.3 b)
 
-check :: (Eq a) => Formatter a -> Parser a -> a -> Bool
+> check :: Formatter a -> Parser String a -> String -> Bool
+> check f p val = (f $ head $ parse p [val]) == val
 
 --------------------------------------------------------------------------------
 6.4 a)
