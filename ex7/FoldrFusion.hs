@@ -21,13 +21,14 @@
 -- ((2 +) . (foldr max 0)) [0,-1..] == foldr (\a x -> max (2 + a) x) 0 [0,-1..]
 -- f = (2 +), g = max, a = 0, h = (\a x -> max (2 + a) x), b = a + 2 = 2 on first iteration
 
-
-
 -- 7.2
 -- a) Prove the foldr -map fusion law:
 
 map'          :: (a -> b) -> [a] -> [b]
 map' f []     = []
 map' f (x:xs) = [f x] ++ foldr (\y ys -> (f y):ys) [] xs
+-- so we see than map f is call f on head of list then foldr using f and :
 
--- ((foldr (+) 0) . map (* 2)) [1,2,3] == foldr (\a b -> 2 * (a + b)) 0 [1,2,3]
+((foldr (+) 0) . map (* 2)) [1,2,3] == foldr (\a b -> 2 * a + b) 0 [1,2,3]
+
+-- (foldr f1 e) . (map' f2) = foldr (\a b -> (f2 a) `f1` b) e
